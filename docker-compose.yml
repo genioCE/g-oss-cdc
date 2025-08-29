@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    command: ["redpanda","start","--overprovisioned","--smp","1","--memory","512M","--reserve-memory","0M","--node-id","0","--check=false","--kafka-addr","0.0.0.0:9092","--advertise-kafka-addr","redpanda:9092"]
+    ports: ["9092:9092","9644:9644"]
+  redpanda-console:
+    image: redpandadata/console:latest
+    environment: [ "KAFKA_BROKERS=redpanda:9092" ]
+    ports: ["8080:8080"]
+    depends_on: [ redpanda ]
+  connect:
+    build: ./docker/connect
+    env_file: .env
+    environment:
+      - BOOTSTRAP_SERVERS=${BOOTSTRAP_SERVERS}
+      - CONNECT_PLUGIN_PATH=/kafka/connect/plugins
+      - AWS_ACCESS_KEY_ID=${MINIO_ROOT_USER}
+      - AWS_SECRET_ACCESS_KEY=${MINIO_ROOT_PASSWORD}
+      - S3_ENDPOINT=${S3_ENDPOINT}
+    ports: ["8083:8083"]
+    depends_on: [ redpanda, postgres ]
+  apicurio:
+    image: apicurio/apicurio-registry-mem:latest
+    ports: ["8085:8080"]
+  postgres:
+    image: debezium/postgres:16
+    env_file: .env
+    environment:
+      - POSTGRES_USER=${PG_USER}
+      - POSTGRES_PASSWORD=${PG_PASSWORD}
+      - POSTGRES_DB=${PG_DB}
+    ports: ["5432:5432"]
+    volumes:
+      - ./sql/source_init.sql:/docker-entrypoint-initdb.d/source_init.sql

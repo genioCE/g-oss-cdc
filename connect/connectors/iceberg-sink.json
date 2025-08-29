@@ -1,0 +1,19 @@
+{
+  "name": "iceberg-sink",
+  "config": {
+    "connector.class": "org.apache.iceberg.connect.IcebergSink",
+    "tasks.max": "1",
+    "topics": "cdc.public.well_tests",
+    "iceberg.tables": "silver.well_tests_cdc",
+    "iceberg.catalog": "nessie",
+    "iceberg.catalog.type": "rest",
+    "iceberg.catalog.uri": "http://localhost:19120/api/v1",
+    "format": "parquet",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true",
+    "iceberg.fs.s3a.endpoint": "${env:S3_ENDPOINT}",
+    "iceberg.fs.s3a.access.key": "${env:MINIO_ROOT_USER}",
+    "iceberg.fs.s3a.secret.key": "${env:MINIO_ROOT_PASSWORD}",
+    "iceberg.fs.s3a.path.style.access": "true"
+  }
+}

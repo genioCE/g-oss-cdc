@@ -1,0 +1,15 @@
+{
+  "name": "debezium-postgres-source",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "${env:PG_USER}",
+    "database.password": "${env:PG_PASSWORD}",
+    "database.dbname": "${env:PG_DB}",
+    "topic.prefix": "cdc",
+    "publication.autocreate.mode": "filtered",
+    "table.include.list": "public.well_tests",
+    "plugin.name": "pgoutput"
+  }
+}

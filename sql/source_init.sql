@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS public.well_tests (id SERIAL PRIMARY KEY, well_id VARCHAR(32) NOT NULL, dt TIMESTAMP NOT NULL DEFAULT NOW(), oil_rate DOUBLE PRECISION, gas_rate DOUBLE PRECISION, water_rate DOUBLE PRECISION, tubing_pressure DOUBLE PRECISION, casing_pressure DOUBLE PRECISION);
+INSERT INTO public.well_tests (well_id, oil_rate, gas_rate, water_rate, tubing_pressure, casing_pressure) SELECT 'WELL-'||i::text, random()*500, random()*2000, random()*300, random()*2000, random()*3000 FROM generate_series(1,10) s(i);
